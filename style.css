@@ -33,10 +33,39 @@ body {
   padding-bottom: 20px;
 }
 
+#profile-pic {
+  grid-column: span 6;
+  text-align: right;
+}
+
+#profile-pic img {
+  width: 240px;
+  height: 240px;
+  border-radius: 120px;
+}
+
+#profile-desc {
+  padding-top: 40px;
+  padding-left: 20px;
+  grid-column: span 6;
+}
+
+@media (max-width: 991px) {
+  #profile-pic {
+    grid-column: span 12;
+    text-align: center;
+  }
+  #profile-desc {
+    grid-column: span 12;
+    padding-top: 20px;
+    text-align: center;
+  }
+}
+
 /* Properties */
 
 #header {
-  text-align: center;
+  margin-top: 20px;
 }
 
 p {
