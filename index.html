@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Albert Sugranyes</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body>
+    <div id="header" class="container">
+      <h1>Albert Sugranyes</h1>
+      <h2>
+        Notes on data-intensive systems, performance, and real-world scale.
+      </h2>
+      <div class="icons">
+        <img
+          id="email-icon"
+          src="assets/envelope.svg"
+          class="icon"
+          title="click to reveal"
+          style="cursor: pointer"
+        />
+        <a href="https://github.com/asugranyes">
+          <img src="assets/github.svg" class="icon" />
+        </a>
+        <a href="https://www.linkedin.com/in/albert-sugranyes-6481ab196/">
+          <img src="assets/linkedin.svg" class="icon" />
+        </a>
+      </div>
+      <div id="email" style="margin-top: 5px; margin-bottom: 5px"></div>
+    </div>
+
+    <hr />
+
+    <div class="section-white">
+      <div id="about" class="container">
+        <div class="title">About</div>
+        <p class="lead">Systems are shaped by their constraints.</p>
+
+        <p>
+          Albert works on the architectural requirements necessary for data and
+          AI systems to operate reliably at scale.
+        </p>
+
+        <p>
+          Correctness is assumed. The real question is whether a system remains
+          understandable, governable, and efficient once it meets reality.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-gray">
+      <div id="work" class="container">
+        <div class="title">History</div>
+        <p>
+          Over the past years, I have focused on designing and operating
+          distributed systems. I currently lead distributed data processing at
+          Airbus. In parallel, I contribute to open-source large-scale data
+          systems, including Apache Spark. I am now expanding into AI systems
+          and inference efficiency.
+        </p>
+        <div style="margin-top: 40px; margin-bottom: 40px">
+          <div class="row">
+            <div class="timespan">
+              2024-Present
+              <img src="assets/airbus.png" />
+            </div>
+            <div class="description">
+              <b>Airbus</b>
+              <p>
+                Senior software engineer with staff-level ownership of
+                distributed systems.
+              </p>
+              <p>
+                I define execution architectures for data-intensive systems
+                across the configuration management domain, spanning compute
+                infrastructure design, resource orchestration, and deployment
+                models.
+              </p>
+              <p>
+                I provide architectural direction for large-scale data
+                processing platforms, guiding how teams design, operate, and
+                evolve distributed pipelines and storage systems supporting
+                multiple aircraft programs (A320, A330, A350, A380, A400M).
+              </p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="timespan">
+              2023-2024
+              <img src="assets/zurich.png" />
+            </div>
+            <div class="description">
+              <b>Zurich Insurance</b>
+              <p>
+                I worked on large-scale data processing workflows with Apache
+                Spark on Databricks.
+              </p>
+              <p>
+                I defined and implemented production-grade data pipelines, and
+                contributed to the architecture of the company’s lakehouse
+                platform.
+              </p>
+              <p>
+                I developed deep expertise in distributed data systems, with a
+                strong focus on Apache Spark performance optimization and
+                efficient resource management.
+              </p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="timespan">
+              2018-2023
+              <img id="uab" src="assets/uab.png" />
+            </div>
+            <div class="description">
+              <b>Autonomous University of Barcelona</b>
+              <p>
+                BSc in Mathematics, with a specialization in computer science
+                and artificial intelligence. This is where I developed a strong
+                interest in computation and learning-based systems, culminating
+                in a final project on interpretability methods in deep learning.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-white">
+      <div id="writing" class="container">
+        <div class="title">Writing</div>
+        <p>Notes on complex software systems.</p>
+        <div style="margin-top: 40px; margin-bottom: 40px">
+          <div class="note">
+            <a href="/writing/cow-changelog-semantics/">
+              Copy-On-Write and Changelog Semantics in Apache Iceberg
+            </a>
+
+            <div class="note-date">December 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script type="text/javascript">
+  const rot13 = (message) => {
+    const alpha =
+      "abcdefghijklmnopqrstuvwxyzabcdefghijklmABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLM";
+    return message.replace(
+      /[a-z]/gi,
+      (letter) => alpha[alpha.indexOf(letter) + 13]
+    );
+  };
+  var e_is_shown = false;
+  document.getElementById("email-icon").addEventListener("click", function () {
+    let email = document.getElementById("email");
+    let msg = "nyoregzberabfhgt" + "@" + "tznvy.pbz";
+
+    email.innerHTML = rot13(msg);
+    email.style.opacity = e_is_shown ? 0 : 1;
+    e_is_shown = !e_is_shown;
+  });
+</script>
