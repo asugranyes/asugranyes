@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Albert Sugranyes</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- ==========================================================
+         Header / Profile
+         ========================================================== -->
+
+    <header class="container">
+      <div class="profile">
+        <div class="profile-pic">
+          <img src="assets/me.jpeg" alt="Albert Sugranyes" />
+        </div>
+
+        <div class="profile-desc">
+          <h1>Albert Sugranyes</h1>
+          <h2>
+            Architecting large-scale data systems under real execution
+            constraints.
+          </h2>
+
+          <div class="icons">
+            <img
+              id="js-email-toggle"
+              src="assets/envelope.svg"
+              class="icon"
+              title="Click to reveal"
+              alt="Email"
+            />
+
+            <a href="https://github.com/asugranyes">
+              <img src="assets/github.svg" class="icon" alt="GitHub" />
+            </a>
+
+            <a href="https://www.linkedin.com/in/albert-sugranyes-6481ab196/">
+              <img src="assets/linkedin.svg" class="icon" alt="LinkedIn" />
+            </a>
+          </div>
+
+          <p class="js-email"></p>
+        </div>
+      </div>
+    </header>
+
+    <hr />
+
+    <main>
+      <!-- ==========================================================
+           About
+           ========================================================== -->
+
+      <section>
+        <div class="container">
+          <h2 class="section-title">About</h2>
+          <p>I work on data-intensive systems.</p>
+
+          <p>
+            My focus is on execution models, performance limits, and how systems
+            behave in production at scale.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           History
+           ========================================================== -->
+
+      <section class="section--gray">
+        <div class="container">
+          <h2 class="section-title">History</h2>
+
+          <p>
+            My work is centered on the design and operation of distributed
+            systems. I currently lead distributed data processing at Airbus. In
+            parallel, I contribute to open-source large-scale data systems,
+            including Apache Spark.
+          </p>
+          <br />
+          <div class="grid">
+            <div class="timeline-date">
+              2024–Present
+              <img src="assets/airbus.png" alt="Airbus" class="logo" />
+            </div>
+
+            <div class="timeline-content">
+              <strong>Airbus</strong>
+
+              <p>Senior software engineer (staff-level ownership).</p>
+
+              <p>
+                I own execution architectures for large-scale data processing
+                systems in the aircraft configuration management domain.
+              </p>
+
+              <p>
+                I provide architectural direction for large-scale data
+                processing platforms supporting multiple aircraft programs
+                (A320, A330, A350, A380, A400M).
+              </p>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="timeline-date">
+              2023–2024
+              <img
+                src="assets/zurich.png"
+                alt="Zurich Insurance"
+                class="logo"
+              />
+            </div>
+
+            <div class="timeline-content">
+              <strong>Zurich Insurance</strong>
+
+              <p>Worked on large-scale Apache Spark pipelines on Databricks.</p>
+
+              <p>
+                Optimized performance, resource efficiency, and production
+                reliability in lakehouse systems.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="timeline-date">
+              2018–2023
+              <img id="uab" src="assets/uab.png" alt="UAB" class="logo" />
+            </div>
+
+            <div class="timeline-content">
+              <strong>Autonomous University of Barcelona</strong>
+
+              <p>
+                BSc in Mathematics, specializing in computer science and
+                artificial intelligence. Final project on interpretability
+                methods in deep learning.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           Writing
+           ========================================================== -->
+
+      <section>
+        <div class="container">
+          <h2 class="section-title">Writing</h2>
+
+          <p>Notes on complex software systems.</p>
+
+          <div class="article-item article-item--featured">
+            <a href="/writing/cow-changelog-semantics">
+              Copy-on-Write and Changelog Semantics in Apache Iceberg
+            </a>
+            <span class="article-date">December 2025</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==========================================================
+         Script
+         ========================================================== -->
+
+    <script>
+      const rot13 = (message) => {
+        const alpha =
+          "abcdefghijklmnopqrstuvwxyzabcdefghijklmABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLM";
+        return message.replace(
+          /[a-z]/gi,
+          (letter) => alpha[alpha.indexOf(letter) + 13]
+        );
+      };
+
+      let emailShown = false;
+      const emailEl = document.querySelector(".js-email");
+      const toggle = document.getElementById("js-email-toggle");
+
+      toggle.addEventListener("click", () => {
+        const msg = "nyoregzberabfhte" + "@" + "tznvy.pbz";
+        emailEl.textContent = rot13(msg);
+        emailEl.style.opacity = emailShown ? 0 : 1;
+        emailShown = !emailShown;
+      });
+    </script>
+  </body>
+</html>
