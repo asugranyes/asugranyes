@@ -1,0 +1,340 @@
+/* ==========================================================================
+   1. Design Tokens
+   ========================================================================== */
+
+:root {
+  /* Colors */
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-muted: #888888;
+  --color-soft: rgba(0, 0, 0, 0.08);
+  --color-border: rgba(0, 0, 0, 0.15);
+  --color-accent: rgba(0, 0, 0, 0.6);
+
+  /* Typography */
+  --font-base: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --font-size-base: 16px;
+  --line-height-base: 1.45;
+
+  /* Spacing scale */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
+
+  /* Layout */
+  --content-width: 80ch;
+  --article-width: 90ch;
+}
+
+/* ==========================================================================
+   2. Base / Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size-base);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  font-family: var(--font-base);
+  line-height: var(--line-height-base);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   3. Layout Primitives
+   ========================================================================== */
+
+.container {
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--space-sm);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: var(--space-2xs);
+}
+
+section {
+  padding-block: var(--space-md);
+}
+
+.section--spacious {
+  padding-block: var(--space-lg);
+}
+
+.section--dense {
+  padding-block: var(--space-sm);
+}
+
+.section--gray {
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg) 0%,
+    var(--color-soft) 8%,
+    var(--color-soft) 92%,
+    var(--color-bg) 100%
+  );
+}
+
+.section--gray > .container {
+  padding-block: var(--space-md);
+}
+
+/* ==========================================================================
+   4. Typography
+   ========================================================================== */
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.1rem;
+}
+
+h2 {
+  margin-block: var(--space-sm);
+  font-size: 1.1rem;
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+p {
+  margin-block: var(--space-sm);
+}
+
+.section-title {
+  font-size: 2.25rem;
+}
+
+/* ==========================================================================
+   5. Header / Profile
+   ========================================================================== */
+
+header {
+  margin-block: var(--space-md);
+}
+
+.profile {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.profile-pic {
+  grid-column: span 5;
+  justify-self: center;
+}
+
+.profile-pic img {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+}
+
+.profile-desc {
+  text-align: center;
+  grid-column: span 7;
+  padding-top: var(--space-md);
+}
+
+/* ==========================================================================
+   6. Icons
+   ========================================================================== */
+
+.icons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.75;
+}
+
+#js-email-toggle {
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   7. Timeline / Experience
+   ========================================================================== */
+
+.timeline-date {
+  grid-column: span 2;
+  font-size: 0.85rem;
+  text-align: right;
+  color: var(--color-muted);
+}
+
+.timeline-content {
+  grid-column: span 10;
+  padding-left: var(--space-md);
+  padding-bottom: var(--space-lg);
+}
+
+.logo {
+  padding-top: 5px;
+  justify-self: right;
+}
+
+#uab {
+  width: 80%;
+}
+
+/* ==========================================================================
+   8. Editorial / Writing
+   ========================================================================== */
+
+article {
+  max-width: var(--article-width);
+  margin-block: var(--space-lg);
+}
+
+.article-nav {
+  display: inline-block;
+  margin-bottom: var(--space-md);
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.article-header {
+  padding-left: var(--space-sm);
+  border-left: 3px solid var(--color-accent);
+}
+
+.article-item {
+  margin-bottom: var(--space-xs);
+  padding-left: var(--space-sm);
+  border-left: 4px solid var(--color-border);
+  font-size: 0.9rem;
+}
+
+.article-item--featured {
+  border-left-color: var(--color-accent);
+}
+
+.article-date {
+  display: block;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.kicker {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   9. Dividers
+   ========================================================================== */
+
+hr {
+  height: 1px;
+  border: 0;
+  margin: 0;
+
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--color-accent),
+    transparent
+  );
+}
+
+/* ==========================================================================
+   10. Code & Output
+   ========================================================================== */
+
+pre,
+.output {
+  margin-inline: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  overflow-x: auto;
+}
+
+code {
+  display: block;
+  font-family: var(--font-mono);
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   11. Figures
+   ========================================================================== */
+
+.figure {
+  margin: var(--space-md);
+  text-align: center;
+}
+
+.figure img {
+  max-width: 70%;
+}
+
+.figure-caption {
+  margin-top: var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+/* ==========================================================================
+   12. Tables
+   ========================================================================== */
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  margin: var(--space-sm) 0;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+
+table th,
+table td {
+  padding: 6px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   13. Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .profile-pic,
+  .profile-desc {
+    grid-column: span 12;
+  }
+
+  .profile-desc {
+    padding-top: var(--space-md);
+  }
+}

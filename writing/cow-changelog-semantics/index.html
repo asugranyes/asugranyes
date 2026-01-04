@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Copy-on-Write and Changelog Semantics in Apache Iceberg — Albert Sugranyes
+    </title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <main>
+      <section>
+        <div class="container">
+          <!-- ==========================================================
+               Article Header
+               ========================================================== -->
+          <nav class="article-nav">
+            <a href="/">← Home</a>
+          </nav>
+
+          <header class="article-header">
+            <span class="kicker">Albert Sugranyes</span>
+            <h1>Copy-on-Write and Changelog Semantics in Apache Iceberg</h1>
+            <time datetime="2025-12-24" class="article-date">
+              December 24, 2025
+            </time>
+          </header>
+
+          <!-- ==========================================================
+               Article Body
+               ========================================================== -->
+
+          <article>
+            <p>
+              Changelog entries in Apache Iceberg do not represent logical
+              change. They are a projection derived from the system's single
+              authoritative source of truth: the snapshot.
+            </p>
+
+            <p>
+              Iceberg defines table correctness at the snapshot level. A
+              snapshot represents the complete and valid state of a table at a
+              point in time: which data files are visible, under which schema,
+              and respecting all table invariants.
+            </p>
+
+            <p>
+              A snapshot fixes one concrete realization of a table logical
+              state. Multiple snapshots may satisfy the same table semantics.
+            </p>
+
+            <p>
+              Snapshots are immutable. Once committed, its manifest and data
+              files are never modified. Any change to the table is expressed by
+              producing new files and publishing a new snapshot, while previous
+              remain unchanged and accessible.
+            </p>
+
+            <p>
+              When write operations affect existing rows, immutabilty is
+              preserved by rewriting data files (copy-on-write) or layering
+              deltas on top of immutable files (merge-on-read). Under
+              copy-on-write, updates and deletes are materialized by rewriting
+              all data files containing the affected rows. Rows that are
+              logically unchanged but reside in rewritten files, known as
+              carry-over rows, are physically re-materialized.
+            </p>
+
+            <p>
+              Changelog tables surface this boundary. Each row is associated
+              with the snapshot that owns it.
+            </p>
+
+            <p>
+              The example below illustrates this boundary directly. Two
+              logically equivalent update sequences produce different physical
+              rewrites and, as a consequence, different changelog entries. This
+              is not a Spark quirk, nor a changelog artifact. It is a direct
+              consequence of Iceberg's snapshot-level contract under
+              copy-on-write semantics.
+            </p>
+
+            <h3>
+              Comparing logically equivalent sequences under copy-on-write
+            </h3>
+
+            <p>
+              We start from an empty Iceberg table, queried through Apache Spark
+              and configured with copy-on-write semantics.
+            </p>
+
+            <pre><code>CREATE TABLE example(id INT, value STRING) USING ICEBERG;</code></pre>
+
+            <p>
+              At this point, the table's logical state is trivial: no rows
+              visible and no data files exist.
+            </p>
+
+            <p>
+              We now express the same logical intent through two different
+              operation sequences.
+            </p>
+
+            <h4>Sequence A: INSERT INTO + MERGE INTO</h4>
+
+            <pre><code>INSERT INTO example VALUES (1, 'a'), (2, 'b'), (3, 'c');</code></pre>
+
+            <p>
+              Spark executes multiple parallel write tasks. As a result, three
+              independent immutable Parquet data files are produced, one per
+              row.
+            </p>
+
+            <p>
+              A subsequent MERGE INTO operation updates one row and inserts two
+              new ones:
+            </p>
+
+            <pre><code>
+            MERGE INTO example t
+            USING (
+            SELECT * FROM VALUES
+                (1, 'd'),
+                (5, 'e'),
+                (6, 'f')
+            AS v(id, value)
+            )
+            ON t.id = v.id
+            WHEN MATCHED THEN UPDATE SET value = v.value
+            WHEN NOT MATCHED THEN INSERT *;
+            </code></pre>
+
+            Logically, the resulting table contains five rows:
+
+            <table>
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>d</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>b</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>c</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>e</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>f</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p>
+              Physically, only the data file containing id=1 is rewritten. The
+              other two files remain unchanged from the previous snapshot.
+            </p>
+
+            <p>
+              In the changelog, rows originating from unchanged files retain
+              their original change_ordinal, while rows introduced or rewritten
+              in the new file appear with a new one.
+            </p>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>id</th>
+                    <th>value</th>
+                    <th>_change_type</th>
+                    <th>_change_ordinal</th>
+                    <th>_commit_snapshot_id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>d</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>6403164038722032081</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>b</td>
+                    <td>INSERT</td>
+                    <td>0</td>
+                    <td>8146078716036017366</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>c</td>
+                    <td>INSERT</td>
+                    <td>0</td>
+                    <td>8146078716036017366</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>e</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>6403164038722032081</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>f</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>6403164038722032081</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4>Sequence B: DOUBLE MERGE INTO</h4>
+
+            <p>
+              We now apply the same logical changes using two successive MERGE
+              INTO operations.
+            </p>
+
+            <pre><code>
+            MERGE INTO example t
+            USING (
+              SELECT * FROM VALUES
+                (1, 'a'),
+                (2, 'b'),
+                (3, 'c')
+              AS v(id, value)
+            )
+            ON t.id = v.id
+            WHEN MATCHED THEN UPDATE SET *
+            WHEN NOT MATCHED THEN INSERT *;
+            </code></pre>
+
+            <p>
+              In this case, Spark materializes all three rows into a single
+              immutable Parquet file.
+            </p>
+
+            <p>
+              The second MERGE INTO is identical to the one used in Sequence A.
+            </p>
+
+            <pre><code>
+            MERGE INTO example t
+            USING (
+            SELECT * FROM VALUES
+                (1, 'd'),
+                (5, 'e'),
+                (6, 'f')
+            AS v(id, value)
+            )
+            ON t.id = v.id
+            WHEN MATCHED THEN UPDATE SET value = v.value
+            WHEN NOT MATCHED THEN INSERT *;
+            </code></pre>
+
+            <p>The final logical table state is identical to Sequence A.</p>
+
+            <p>
+              Physically, the single data file produced by the first merge is
+              identified as affected and therefore must be fully rewritten under
+              copy-on-write semantics.
+            </p>
+
+            <p>
+              As a result, every row appears in the changelog with a new
+              change_ordinal
+            </p>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>id</th>
+                    <th>value</th>
+                    <th>_change_type</th>
+                    <th>_change_ordinal</th>
+                    <th>_commit_snapshot_id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>d</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>7023772432058531414</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>b</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>7023772432058531414</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>c</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>7023772432058531414</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>e</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>7023772432058531414</td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>f</td>
+                    <td>INSERT</td>
+                    <td>1</td>
+                    <td>7023772432058531414</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Conclusion</h3>
+
+            <p>This behavior is expected and necessary.</p>
+
+            <p>
+              Changelog tables do not encode semantic diffs at the row level.
+              They encode snapshot ownership.
+            </p>
+
+            <p>
+              Under copy-on-write, any row that crosses a file rewrite boundary
+              must be re-materialized and re-associated with the new snapshot in
+              the changelog projection - regardless of whether its logical value
+              changed. Failing to do so would introduce an additional source of
+              truth outside the snapshot, violating Iceberg's correctness
+              guarantees.
+            </p>
+
+            <p>
+              This is not an implementation detail, but a direct consequence of
+              defining table correctness at snapshot level under immutability
+              and copy-on-write semantics.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
