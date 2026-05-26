@@ -168,11 +168,9 @@ header {
 
 .logo {
   padding-top: 5px;
-  justify-self: right;
-}
-
-#uab {
-  width: 80%;
+  justify-self: center;
+  max-height: 56px;
+  width: auto;
 }
 
 article {

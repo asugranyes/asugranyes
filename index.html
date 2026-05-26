@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -98,7 +98,7 @@
             <div class="timeline-date">
               2023–2024
               <img
-                src="assets/zurich.png"
+                src="assets/zurich.svg"
                 alt="Zurich Insurance"
                 class="logo"
               />
@@ -119,7 +119,7 @@
           <div class="grid">
             <div class="timeline-date">
               2018–2023
-              <img id="uab" src="assets/uab.png" alt="UAB" class="logo" />
+              <img src="assets/uab.svg" alt="UAB" class="logo" />
             </div>
 
             <div class="timeline-content">
@@ -157,7 +157,7 @@
           "abcdefghijklmnopqrstuvwxyzabcdefghijklmABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLM";
         return message.replace(
           /[a-z]/gi,
-          (letter) => alpha[alpha.indexOf(letter) + 13]
+          (letter) => alpha[alpha.indexOf(letter) + 13],
         );
       };
 
