@@ -75,8 +75,8 @@ section {
   background: linear-gradient(
     to bottom,
     var(--color-bg) 0%,
-    var(--color-soft) 8%,
-    var(--color-soft) 92%,
+    var(--color-soft) 48px,
+    var(--color-soft) calc(100% - 48px),
     var(--color-bg) 100%
   );
 }
@@ -190,18 +190,18 @@ article {
   border-left: 3px solid var(--color-accent);
 }
 
-.article-item {
+.entry {
   margin-bottom: var(--space-xs);
   padding-left: var(--space-sm);
   border-left: 4px solid var(--color-border);
   font-size: 0.9rem;
 }
 
-.article-item--featured {
+.entry--featured {
   border-left-color: var(--color-accent);
 }
 
-.article-date {
+.entry-date {
   display: block;
   color: var(--color-muted);
   font-size: 0.85rem;
